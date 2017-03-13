@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css" />
+  <meta charset="utf-8">
+  <title>Suche nach National- und Allianzlizenzen in der ZDB</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.10.2/jquery-ui.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <h1>Suche nach National- und Allianzlizenzen in der ZDB</h1>
+    <form method="GET" class="form-inline" action="http://dispatch.opac.d-nb.de/SRCH">
+        <b>ZS-Paket:</b> <input autocomplete="on" class="ui-autocomplete-input" id="search-organisation" style="width:500px;line-height:1.5em" type="text">
+        <input name="TRM" id="id" type="hidden">
+        <input name="IKT" id="ikt" value="8574" type="hidden">
+        <button type="reset" class="btn" onclick="$('#selected-organisation').html('');$('#submit-organisation').hide();">Löschen</button>
+        <div id="selected-organisation"></div>
+        <button type="submit" id="submit-organisation" class="btn">Filter für diese Institution</button>
+    </form>
+    
+    <script type="text/javascript" class="init">
+        $("#submit-organisation").hide();
+        $('#search-organisation').autocomplete({
+          select: function (event, ui) {
+            event.preventDefault();
+            $("#search-organisation").val(ui.item.label);
+
+            var isil = /\/ZDB-1.+$/.exec(ui.item.value);
+            $("#id").val(isil[1]);
+            $("#selected-organisation").html("<h2>ZDB-Ressourcen von " + ui.item.label + " &lt;" + isil[1] + "&gt;</h2>");
+            $("#submit-organisation").show();
+          },
+          focus: function (event, ui) {
+            event.preventDefault();
+            $("#search-organisation").val(ui.item.label);
+          },
+          source: function (request, response) {
+            $.ajax({
+              url: "https://lobid.org/organisation",
+              dataType: "jsonp",
+              data: {
+                name: request.term,
+                q: '("http://lobid.org/organisation/ZDB-1-+")',,
+                format: "ids",
+                size: 25
+              },
+              success: function (data) {
+                response(data);
+              }
+            });
+          }
+        });
+        </script >
+</body>
+</html>
