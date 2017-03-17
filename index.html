@@ -27,7 +27,6 @@
           select: function (event, ui) {
             event.preventDefault();
             $("#search-organisation").val(ui.item.label);
-alert(ui.item.value);
             var isil = /\/ZDB-1.+$/.exec(ui.item.value);
             $("#id").val(isil[1]);
             $("#selected-organisation").html("<h2>ZDB-Ressourcen von " + ui.item.label + " &lt;" + isil[1] + "&gt;</h2>");
@@ -35,6 +34,7 @@ alert(ui.item.value);
           },
           focus: function (event, ui) {
             event.preventDefault();
+            alert(ui.item.value);
             $("#search-organisation").val(ui.item.label);
           },
           source: function (request, response) {
